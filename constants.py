@@ -1,7 +1,7 @@
 
 
 reelsetSymbolsCount = {
-    "AA" : [2,2,2,2,2],
+    "AA" : [2,2,2,2,1],
     "BB" : [2,4,2,4,2],
     "CC" : [4,2,4,2,4],
     "DD" : [4,2,4,4,6],
@@ -25,6 +25,7 @@ paytable = {
     "WW" : [0,0,0],
     "SS" : [0,0,0],
 }
+
 basebet = 20
 excelFilePath = "3x3practice.xlsx"
 
