@@ -1,5 +1,5 @@
 
-
+from enum import Enum
 reelsetSymbolsCount = {
     "AA" : [2,2,2,2,1],
     "BB" : [2,4,2,4,2],
@@ -10,8 +10,17 @@ reelsetSymbolsCount = {
     "GG" : [10,8,6,8,6],
     "HH" : [12,8,8,10,8],
     "WW" : [4,4,2,4,4],
-    "SS" : [6,4,4,6,6],
+    "SS" : [1,2,2,2,2],
 }
+
+class GameFeatures(Enum):
+    BASEGAME=1,
+    FREEGAME=1
+
+baseReelWorkBook = "BaseGame"
+freeReelWorkBook = "FreeGame"
+
+freeSpinsCount = [7,10,15]
 
 paytable = {
     "AA" : [50,100,200],
@@ -19,9 +28,9 @@ paytable = {
     "CC" : [35,60,100],
     "DD" : [25,50,80],
     "EE" : [15,35,60],
-    "FF" : [12,25,40],
-    "GG" : [9,20,30],
-    "HH" : [7,15,25],
+    "FF" : [10,20,40],
+    "GG" : [8,18,30],
+    "HH" : [5,12,25],
     "WW" : [0,0,0],
     "SS" : [0,0,0],
 }

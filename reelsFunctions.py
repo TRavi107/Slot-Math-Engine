@@ -1,9 +1,14 @@
 from openpyxl import load_workbook
-from constants import excelFilePath
+from constants import excelFilePath , GameFeatures , baseReelWorkBook , freeReelWorkBook
 import random
 
-def get_col_data(col: int) -> list:
+def get_col_data(gameFeature: GameFeatures,col: int) -> list:
     wb = load_workbook(excelFilePath, data_only=True)
+    match gameFeature:
+        case GameFeatures.BASEGAME:
+            ws = wb[baseReelWorkBook]
+        case GameFeatures.FREEGAME:
+            ws = wb[freeReelWorkBook]
     ws = wb.active
     
     return [
@@ -12,22 +17,27 @@ def get_col_data(col: int) -> list:
         if ws.cell(row=row, column=col).value is not None
     ]
 
-def collect_col_data():
+def collect_col_data(gameFeature: GameFeatures):
     reels =[]
     for i in range(1,6):
-        data = get_col_data(i)
+        data = get_col_data(gameFeature,i)
         reels.append(data)
 
     return reels
 
-reels = collect_col_data()
+baseReels = collect_col_data(GameFeatures.BASEGAME)
+freeReels = collect_col_data(GameFeatures.FREEGAME)
 
-def generate_slot_matrix() -> list[list[str]]:
+def generate_slot_matrix(gameFeature: GameFeatures) -> list[list[str]]:
     """Generate a 3x5 matrix from 5 reel columns."""
     matrix = []
     
     for col in range(5):  # 5 reels
-        reel = reels[col]  # your existing function
+        match gameFeature:
+            case GameFeatures.BASEGAME:
+                reel = baseReels[col] 
+            case GameFeatures.FREEGAME:
+                reel = freeReels[col]  
         
         max_start = len(reel) - 3
         start_idx = random.randint(0, max_start)
