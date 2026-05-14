@@ -135,7 +135,7 @@ def runSim_chunked(args):
 if __name__ == '__main__':
     start = time.perf_counter()
     
-    spinCount = 200000
+    spinCount = 2000000
     baseMatrixData = BaseMatrixData(spinCount,basebet)
     freeMatrixData = FreeMatrixData(spinCount,basebet)
 
@@ -183,7 +183,7 @@ if __name__ == '__main__':
 
     # print(f"Total win: {baseMatrixData.totalWins} ")
     # print(f"Total bet: {baseMatrixData.BASEBET*baseMatrixData.SPINCOUNT} ")
-    # print(f"RTP : {baseMatrixData.rtp:.4f} %")
+    print(f"RTP : {baseMatrixData.rtp:.4f} %")
     # print(f"Hitrate : {baseMatrixData.hitRate:.4f} ")
 
     # for symbols in sorted(baseMatrixData.symbolsData.values(), key=lambda s: s.SYMBOL):
