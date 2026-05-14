@@ -1,6 +1,6 @@
 import random
 from openpyxl import load_workbook ,Workbook
-from constants import reelsetSymbolsCount , excelFilePath
+from constants import reelsetSymbolsCount , freesetSymbolsCount , excelFilePath
 
 def build_reel_column(symbol_counts: dict, col_key: int) -> list:
     """Build a shuffled list of symbols for a given column key."""
@@ -11,9 +11,11 @@ def build_reel_column(symbol_counts: dict, col_key: int) -> list:
     return reel
 
 def write_reels_to_excel(symbol_counts: dict):
-    wb = Workbook()
-    ws = wb.active
-    ws.title = "Reels"
+    wb = load_workbook(excelFilePath)
+    if "Reels" in wb.sheetnames:
+        ws = wb["Reels"]  # Use existing sheet
+    else:
+        ws = wb.create_sheet(title="Reels")
 
     num_cols = len(next(iter(symbol_counts.values())))  # 5 columns
 
@@ -30,4 +32,4 @@ def write_reels_to_excel(symbol_counts: dict):
     wb.save(excelFilePath)
     print(f"Saved to {excelFilePath}")
 
-write_reels_to_excel(reelsetSymbolsCount)
+write_reels_to_excel(freesetSymbolsCount)

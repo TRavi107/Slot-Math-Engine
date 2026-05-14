@@ -13,14 +13,26 @@ reelsetSymbolsCount = {
     "SS" : [1,2,2,2,2],
 }
 
+freesetSymbolsCount = {
+    "AA" : [5,5,5,5,4],
+    "BB" : [6,5,4,6,4],
+    "CC" : [6,4,6,4,6],
+    "DD" : [6,4,6,6,8],
+    "EE" : [6,8,6,12,6],
+    "FF" : [12,12,8,12,8],
+    "GG" : [14,12,8,10,8],
+    "HH" : [16,12,12,14,12],
+    "WW" : [5,6,4,6,8],
+}
+
 class GameFeatures(Enum):
     BASEGAME=1,
     FREEGAME=1
 
 baseReelWorkBook = "BaseGame"
-freeReelWorkBook = "FreeGame"
+freeReelWorkBook = "Reels"
 
-freeSpinsCount = [7,10,15]
+freeSpinsCount = [10,15,20]
 
 paytable = {
     "AA" : [50,100,200],

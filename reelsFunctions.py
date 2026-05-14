@@ -9,7 +9,7 @@ def get_col_data(gameFeature: GameFeatures,col: int) -> list:
             ws = wb[baseReelWorkBook]
         case GameFeatures.FREEGAME:
             ws = wb[freeReelWorkBook]
-    ws = wb.active
+    # ws = wb.active
     
     return [
         ws.cell(row=row, column=col).value
@@ -31,7 +31,7 @@ freeReels = collect_col_data(GameFeatures.FREEGAME)
 def generate_slot_matrix(gameFeature: GameFeatures) -> list[list[str]]:
     """Generate a 3x5 matrix from 5 reel columns."""
     matrix = []
-    
+    # print (baseReels[0][0])
     for col in range(5):  # 5 reels
         match gameFeature:
             case GameFeatures.BASEGAME:

@@ -97,14 +97,28 @@ class BaseMatrixData(ReelMatrixData):
 @dataclass
 class FreeMatrixData(ReelMatrixData):
     freeSpinsCount: int = 0
+    triggerCount: int =0 # number of times free spin was triggered
+    triggerRate: float =0
+    averageSpins: float =0
     
     def __add__(self, other):
         result = super().__add__(other)
         result.freeSpinsCount = self.freeSpinsCount + other.freeSpinsCount 
+        result.triggerCount = self.triggerCount + other.triggerCount
         return result
 
     def AddFreeSpins(self,spins:int):
         self.freeSpinsCount +=spins
+
+    def AddFreeTriggerCount(self,spins: int):
+        self.triggerCount += spins
+
+    def calculate(self):
+        super().calculate()
+        self.triggerRate = self.SPINCOUNT/(self.triggerCount if self.triggerCount else 1)
+        self.averageSpins = self.freeSpinsCount/(self.triggerCount if self.triggerCount else 1)
+        self.hitRate = self.freeSpinsCount/max(self.winningSpins,1)
+        
 
 @dataclass
 class SymbolsData:

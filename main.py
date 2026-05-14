@@ -9,9 +9,8 @@ import math
 import time
 import multiprocessing
 
-def check_paylines(matrix: list[list[str]], paylines: list[list[int]], baseReelMatrix):
+def check_paylines(matrix: list[list[str]], paylines: list[list[int]], reelMatrix):
     
-    results = {}
     totalWin= 0
    
     for i, payline in enumerate(paylines, start=1):
@@ -30,20 +29,12 @@ def check_paylines(matrix: list[list[str]], paylines: list[list[int]], baseReelM
             else:
                 break
         
+        payout = paytable[symbols[0]][match_count-3] if match_count >=3 else 0
+        totalWin += payout
 
-        results[i] = {
-            "symbols"    : symbols,
-            "match"      : match_count >= 3,
-            "match_count": match_count if match_count >= 3 else 0,
-            "symbol"     : symbols[0] if match_count >= 3 else None,
-            "payout"     : paytable[symbols[0]][match_count-3] if match_count >=3 else 0
-        }
-        totalWin += results[i]['payout']
+        reelMatrix.updateSymbolsData(payout,match_count,symbols[0])
+    reelMatrix.updateWinnings(totalWin)
 
-        baseReelMatrix.updateSymbolsData(results[i]['payout'],match_count,symbols[0])
-    baseReelMatrix.updateWinnings(totalWin)
-
-    return results,totalWin
 
 def check_scatter(matrix: list[list[str]]):
     row = len(matrix)
@@ -62,6 +53,7 @@ def check_scatter(matrix: list[list[str]]):
 
 def free_game(scatterCount:int, freeReelMatrixData:FreeMatrixData):
     freeSpinCount = freeSpinsCount[scatterCount-3]
+    freeReelMatrixData.AddFreeTriggerCount(1)
     freeReelMatrixData.AddFreeSpins(freeSpinCount)
 
     while (freeSpinCount >0):
@@ -143,7 +135,7 @@ def runSim_chunked(args):
 if __name__ == '__main__':
     start = time.perf_counter()
     
-    spinCount = 20000
+    spinCount = 200000
     baseMatrixData = BaseMatrixData(spinCount,basebet)
     freeMatrixData = FreeMatrixData(spinCount,basebet)
 
@@ -155,7 +147,7 @@ if __name__ == '__main__':
     manager = multiprocessing.Manager()
     prog_queue = manager.Queue()
 
-    # # ✅ ProcessPoolExecutor — bypasses GIL, true parallel CPU execution
+    # ✅ ProcessPoolExecutor — bypasses GIL, true parallel CPU execution
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         futures = [executor.submit(runSim_chunked,  (chunk, prog_queue)) for chunk in chunks]
 
@@ -165,7 +157,7 @@ if __name__ == '__main__':
         total_reports = max_workers * 10  # each worker sends 10 updates
 
         while completed < total_reports:
-            # prog_queue.get()                          # blocks until a worker reports
+            prog_queue.get()                          # blocks until a worker reports
             completed += 1
             total_done = int(completed / total_reports * spinCount)
             percent    = int((completed / total_reports) * 100)
@@ -183,7 +175,7 @@ if __name__ == '__main__':
         
 
 
-    # baseMatrixData,_ = runSim(2000000)
+    # baseMatrixData,freeMatrixData = runSim(200000)
     
 
     baseMatrixData.calculate()
@@ -194,16 +186,18 @@ if __name__ == '__main__':
     # print(f"RTP : {baseMatrixData.rtp:.4f} %")
     # print(f"Hitrate : {baseMatrixData.hitRate:.4f} ")
 
-    # print(f"ScatterHitRate: {(spinCount/(freeMatrixData.freeSpinsCount)):.4f}")
-
     # for symbols in sorted(baseMatrixData.symbolsData.values(), key=lambda s: s.SYMBOL):
     #     print(f"{symbols.SYMBOL:<10} {symbols.hitrate3OK:>10.4f} {symbols.hitrate4OK:>10.4f} {symbols.hitrate5OK:>10.4f} {symbols.hitrate:>10.4f} {symbols.rtp:>10.4f}%")
 
     print("#### FREE SPIN ####")
     print(f"Total win : {freeMatrixData.totalWins}")
+    print(f"Total freegames : {freeMatrixData.freeSpinsCount}")
     print(f"RTP : {freeMatrixData.rtp:.4f}")
+    print(f"Average Spins : {freeMatrixData.averageSpins:.4f}")
     print(f"Hitrate : {freeMatrixData.hitRate:.4f}")
+    print(f"TriggerRate : {freeMatrixData.triggerRate:.4f}")
     for symbols in sorted(freeMatrixData.symbolsData.values(), key=lambda s: s.SYMBOL):
         print(f"{symbols.SYMBOL:<10} {symbols.hitrate3OK:>10.4f} {symbols.hitrate4OK:>10.4f} {symbols.hitrate5OK:>10.4f} {symbols.hitrate:>10.4f} {symbols.rtp:>10.4f}%")
-
+        # pass
+    # print(freeMatrixData)
     print (f"Time elapsed: {(time.perf_counter() - start):.4f}")
